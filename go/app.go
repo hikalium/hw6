@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	http.HandleFunc("/", handlePata)
+	http.HandleFunc("/pata/", handlePata)
 }
 
 func handlePata(w http.ResponseWriter, r *http.Request) {
