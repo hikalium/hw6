@@ -6,9 +6,9 @@
 </head>
 <body>
     <h1>パタトクカシーー</h1>
-	{{if .Result}}
+	{{if .}}
 	<h2>けっか</h2>
-	<p>{{.Result}}</p>
+	<p>{{.}}</p>
 	{{end}}
 	<h2>つくる</h2>
 	<form action="." method="POST">

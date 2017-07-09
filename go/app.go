@@ -34,6 +34,7 @@ func Max(x, y int) int {
 //
 
 func handleStationInfo(w http.ResponseWriter, r *http.Request) {
+	var err error
 	ctx := appengine.NewContext(r)
 	client := urlfetch.Client(ctx)
 	resp, err := client.Get("http://fantasy-transit.appspot.com/net?format=json")
@@ -44,9 +45,9 @@ func handleStationInfo(w http.ResponseWriter, r *http.Request) {
 	//
 	// http://m-shige1979.hatenablog.com/entry/2016/01/29/080000
 	// http://golang-jp.org/pkg/text/template/
-	body, err3 := ioutil.ReadAll(resp.Body)
-	if err3 != nil {
-		panic(err3)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
 	}
 	var tracks []Track
 	if err := json.Unmarshal(body, &tracks); err != nil {
@@ -90,19 +91,19 @@ func handleStationInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	station := stations[r.Form.Get("key")]
 
-	tpl, err1 := template.ParseFiles("templates/stationinfo.gtpl")
-	if err1 != nil {
-		panic(err1)
+	tpl, err := template.ParseFiles("templates/stationinfo.gtpl")
+	if err != nil {
+		panic(err)
 	}
-	err2 := tpl.Execute(w, struct {
+	err = tpl.Execute(w, struct {
 		Sta      Station
 		Stations map[string]Station
 	}{
 		Sta:      station,
 		Stations: stations,
 	})
-	if err2 != nil {
-		panic(err2)
+	if err != nil {
+		panic(err)
 	}
 
 }
@@ -180,6 +181,7 @@ func findRoute(from, to string, stations map[string]Station) []string {
 }
 
 func handleRouteSearch(w http.ResponseWriter, r *http.Request) {
+	var err error
 	ctx := appengine.NewContext(r)
 	client := urlfetch.Client(ctx)
 	resp, err := client.Get("http://fantasy-transit.appspot.com/net?format=json")
@@ -190,9 +192,9 @@ func handleRouteSearch(w http.ResponseWriter, r *http.Request) {
 	//
 	// http://m-shige1979.hatenablog.com/entry/2016/01/29/080000
 	// http://golang-jp.org/pkg/text/template/
-	body, err3 := ioutil.ReadAll(resp.Body)
-	if err3 != nil {
-		panic(err3)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
 	}
 	var tracks []Track
 	if err := json.Unmarshal(body, &tracks); err != nil {
@@ -239,11 +241,11 @@ func handleRouteSearch(w http.ResponseWriter, r *http.Request) {
 
 	route := findRoute(stationFrom.Key, stationTo.Key, stations)
 
-	tpl, err1 := template.ParseFiles("templates/routesearch.gtpl")
-	if err1 != nil {
-		panic(err1)
+	tpl, err := template.ParseFiles("templates/routesearch.gtpl")
+	if err != nil {
+		panic(err)
 	}
-	err2 := tpl.Execute(w, struct {
+	err = tpl.Execute(w, struct {
 		Stations    map[string]Station
 		Result      []string
 		StationFrom Station
@@ -254,8 +256,8 @@ func handleRouteSearch(w http.ResponseWriter, r *http.Request) {
 		StationFrom: stationFrom,
 		StationTo:   stationTo,
 	})
-	if err2 != nil {
-		panic(err2)
+	if err != nil {
+		panic(err)
 	}
 
 }
@@ -265,6 +267,7 @@ func handleRouteSearch(w http.ResponseWriter, r *http.Request) {
 //
 
 func handlePata(w http.ResponseWriter, r *http.Request) {
+	var err error
 	r.ParseForm()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	a := r.Form.Get("a")
@@ -273,17 +276,13 @@ func handlePata(w http.ResponseWriter, r *http.Request) {
 
 	// http://m-shige1979.hatenablog.com/entry/2016/01/29/080000
 	// http://golang-jp.org/pkg/text/template/
-	tpl, err1 := template.ParseFiles("templates/pata.gtpl")
-	if err1 != nil {
-		panic(err1)
+	tpl, err := template.ParseFiles("templates/pata.gtpl")
+	if err != nil {
+		panic(err)
 	}
-	err2 := tpl.Execute(w, struct {
-		Result string
-	}{
-		Result: ans,
-	})
-	if err2 != nil {
-		panic(err2)
+	err = tpl.Execute(w, ans)
+	if err != nil {
+		panic(err)
 	}
 }
 
